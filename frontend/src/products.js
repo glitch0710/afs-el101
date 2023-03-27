@@ -15,7 +15,7 @@ const products = [
     image: "/images/paklay.jpg",
     category: "viand",
     price: 35.0,
-    countInServings: 50,
+    countInServings: 0,
     rating: 5.0,
     numReviews: 12,
   },
