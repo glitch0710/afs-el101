@@ -1,11 +1,12 @@
 import React from "react";
 import { Card } from "react-bootstrap";
+import "../index.css"
 
 const Product = ({ product }) => {
   return (
     <Card className="my-3 p-3 rounded">
       <a href={`/product/${product.id}`}>
-        <Card.Img src={product.image} style={{ width: 230, height: 200 }} />
+        <Card.Img src={product.image} className="card-img-top" />
       </a>
 
       <Card.Body>
