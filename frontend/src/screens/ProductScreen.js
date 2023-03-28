@@ -15,7 +15,7 @@ const ProductScreen = ({ match }) => {
       </Link>
       <Row>
         <Col md={6}>
-          <Image src={product.image} alt={product.name} fluid />
+          <Image src={product.image} alt={product.name} className="display-img" fluid />
         </Col>
 
         <Col md={6}>
@@ -29,7 +29,7 @@ const ProductScreen = ({ match }) => {
                 <Rating
                   value={product.rating}
                   text={`${product.numReviews} reviews`}
-                  color={"#f8e825"}
+                  color={"#fcc203"}
                 />
               </ListGroup.Item>
             </ListGroup>

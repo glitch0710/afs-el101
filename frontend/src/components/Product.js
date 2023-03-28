@@ -23,7 +23,7 @@ const Product = ({ product }) => {
             <Rating
               value={product.rating}
               text={`${product.numReviews} reviews`}
-              color={"#f8e825"}
+              color={"#fcc203"}
             />
           </div>
         </Card.Text>

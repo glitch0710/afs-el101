@@ -6,9 +6,9 @@ h3 {
   padding: 1rem 0;
 }
 
-img {
-  width: 500px;
-  height: 500px;
+.display-img {
+  width: 100%;
+  background-size: cover;
 }
 
 .card-img-top {
