@@ -1,13 +1,26 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Link, useParams } from "react-router-dom";
 import { Row, Col, Image, Button, ListGroup, Card } from "react-bootstrap";
 import Rating from "../components/Rating";
-import products from "../products";
 import "../index.css";
+import axios from "axios";
 
 const ProductScreen = ({ match }) => {
   const { id } = useParams();
-  const product = products.find((p) => String(p.id) === id);
+  const [product, setProduct] = useState([]);
+
+  useEffect(() => {
+    async function fetchProduct() {
+      const { data } = await axios.get(`/api/product/${id}`);
+      setProduct(data)
+    }
+
+    fetchProduct();
+  }, []);
+
+
+  // const { id } = useParams();
+  // const product = products.find((p) => String(p.id) === id);
   return (
     <div>
       <Link to="/" className="btn btn-light my-3">
@@ -15,7 +28,12 @@ const ProductScreen = ({ match }) => {
       </Link>
       <Row>
         <Col md={6}>
-          <Image src={product.image} alt={product.name} className="display-img" fluid />
+          <Image
+            src={product.image}
+            alt={product.name}
+            className="display-img"
+            fluid
+          />
         </Col>
 
         <Col md={6}>
@@ -58,7 +76,11 @@ const ProductScreen = ({ match }) => {
 
               <ListGroup.Item>
                 <div className="d-grid gap-2">
-                  <Button variant="secondary" size="lg" disabled={product.countInServings === 0}>
+                  <Button
+                    variant="secondary"
+                    size="lg"
+                    disabled={product.countInServings === 0}
+                  >
                     Add to Cart
                   </Button>
                 </div>
