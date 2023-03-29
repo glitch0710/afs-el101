@@ -2,54 +2,80 @@ from django.db import models
 from django.contrib.auth.models import User
 
 # Create your models here.
+
+
 class Category(models.Model):
     name = models.CharField(max_length=100, blank=False, null=False)
 
+    def __str__(self):
+        return self.name
+
 
 class Food(models.Model):
-    user = models.ForeignKey(User, models.DO_NOTHING)
+    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
     name = models.CharField(max_length=100, blank=False, null=False)
     image = models.ImageField(upload_to=None)
-    category = models.ForeignKey(Category, models.DO_NOTHING)
-    price = models.IntegerField(null=False, blank=False)
-    count_in_servings = models.IntegerField(blank=True, null=True)
+    category = models.ForeignKey(
+        Category, on_delete=models.SET_NULL, null=True)
+    price = models.DecimalField(
+        null=False, blank=False, decimal_places=2, max_digits=7)
+    count_in_servings = models.IntegerField(blank=True, null=True, default=0)
     rating = models.IntegerField(blank=True, null=True)
-    num_reviews = models.IntegerField(blank=True, null=True)
+    num_reviews = models.IntegerField(blank=True, null=True, default=0)
     created_date = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.name
 
 
 class Order(models.Model):
     payment_method = models.CharField(max_length=50, blank=False, null=False)
-    transaction_fee = models.IntegerField(blank=False, null=False)
-    total_price = models.IntegerField(blank=False, null=False)
+    transaction_fee = models.DecimalField(
+        null=False, blank=False, decimal_places=2, max_digits=7)
+    total_price = models.DecimalField(
+        null=False, blank=False, decimal_places=2, max_digits=7)
     is_paid = models.BooleanField(default=False)
     is_delivered = models.BooleanField(default=False)
-    payment_date = models.DateTimeField()
-    delivery_date = models.DateTimeField()
+    payment_date = models.DateTimeField(
+        auto_now_add=False, null=True, blank=True)
+    delivery_date = models.DateTimeField(
+        auto_now_add=False, null=True, blank=True)
     created_date = models.DateTimeField(auto_now_add=True)
-    user = models.ForeignKey(User, models.DO_NOTHING)
+    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
+
+    def __str__(self):
+        return str(self.created_date)
 
 
 class OrderDetail(models.Model):
-    order = models.ForeignKey(Order, models.DO_NOTHING)
-    food = models.ForeignKey(Food, models.DO_NOTHING)
+    order = models.ForeignKey(Order, on_delete=models.SET_NULL, null=True)
+    food = models.ForeignKey(Food, on_delete=models.SET_NULL, null=True)
     name = models.CharField(max_length=100, null=False, blank=False)
-    qty = models.IntegerField(default=1)
+    qty = models.IntegerField(default=0, blank=True, null=True)
     price = models.IntegerField(blank=False, null=True)
     image = models.ImageField(upload_to=None)
 
+    def __str__(self):
+        return str(self.name)
+
 
 class Delivery(models.Model):
-    order = models.ForeignKey(Order, models.DO_NOTHING)
+    order = models.OneToOneField(Order, on_delete=models.CASCADE, null=False)
     address = models.TextField(blank=False, null=False)
-    shipping_fee = models.IntegerField(default=0)
+    shipping_fee = models.DecimalField(
+        null=False, blank=False, decimal_places=2, max_digits=7, default=0)
+
+    def __str__(self):
+        return str(self.address)
 
 
 class Review(models.Model):
-    user = models.ForeignKey(User, models.DO_NOTHING)
-    food = models.ForeignKey(Food, models.DO_NOTHING)
+    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
+    food = models.ForeignKey(Food, on_delete=models.SET_NULL, null=True)
     name = models.CharField(max_length=100, default='Anonymous')
-    rating = models.IntegerField(blank=False, null=False)
+    rating = models.IntegerField(blank=True, null=True, default=0)
     comment = models.TextField(blank=True, null=True)
     created_date = models.DateTimeField(auto_now_add=True)
 
+    def __str__(self):
+        return str(self.rating)
