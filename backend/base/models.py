@@ -14,13 +14,14 @@ class Category(models.Model):
 class Food(models.Model):
     user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
     name = models.CharField(max_length=100, blank=False, null=False)
-    image = models.ImageField(upload_to=None)
+    image = models.ImageField(blank=False, null=False)
     category = models.ForeignKey(
         Category, on_delete=models.SET_NULL, null=True)
     price = models.DecimalField(
         null=False, blank=False, decimal_places=2, max_digits=7)
     count_in_servings = models.IntegerField(blank=True, null=True, default=0)
-    rating = models.IntegerField(blank=True, null=True)
+    rating = models.DecimalField(
+        blank=True, null=True, default=0, decimal_places=2, max_digits=5)
     num_reviews = models.IntegerField(blank=True, null=True, default=0)
     created_date = models.DateTimeField(auto_now_add=True)
 
@@ -53,7 +54,7 @@ class OrderDetail(models.Model):
     name = models.CharField(max_length=100, null=False, blank=False)
     qty = models.IntegerField(default=0, blank=True, null=True)
     price = models.IntegerField(blank=False, null=True)
-    image = models.ImageField(upload_to=None)
+    image = models.ImageField(blank=False, null=False)
 
     def __str__(self):
         return str(self.name)

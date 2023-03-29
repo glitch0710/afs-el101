@@ -46,7 +46,7 @@ const ProductScreen = ({ match }) => {
               <ListGroup.Item>
                 <Rating
                   value={product.rating}
-                  text={`${product.numReviews} reviews`}
+                  text={`${product.num_reviews} reviews`}
                   color={"#fcc203"}
                 />
               </ListGroup.Item>
@@ -66,8 +66,8 @@ const ProductScreen = ({ match }) => {
                   <Col>Servings Available: </Col>
                   <Col>
                     <strong>
-                      {product.countInServings > 0
-                        ? `${product.countInServings} servings`
+                      {product.count_in_servings > 0
+                        ? `${product.count_in_servings} servings`
                         : "Sold Out"}
                     </strong>
                   </Col>
@@ -79,7 +79,7 @@ const ProductScreen = ({ match }) => {
                   <Button
                     variant="secondary"
                     size="lg"
-                    disabled={product.countInServings === 0}
+                    disabled={product.count_in_servings === 0}
                   >
                     Add to Cart
                   </Button>
