@@ -34,7 +34,7 @@ const ProductScreen = () => {
               src={product.image}
               alt={product.name}
               className="display-img"
-              fluid
+              fluid rounded
             />
           </Col>
 
