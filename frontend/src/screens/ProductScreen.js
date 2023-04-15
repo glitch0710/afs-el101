@@ -1,7 +1,15 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Link, useParams } from "react-router-dom";
-import { Row, Col, Image, Button, ListGroup, Card } from "react-bootstrap";
+import { Link, useParams, useNavigate } from "react-router-dom";
+import {
+  Row,
+  Col,
+  Image,
+  Button,
+  ListGroup,
+  Card,
+  Form,
+} from "react-bootstrap";
 import Rating from "../components/Rating";
 import Loader from "../components/Loader";
 import Message from "../components/Message";
@@ -9,14 +17,21 @@ import "../index.css";
 import { listProductDetails } from "../actions/productActions";
 
 const ProductScreen = () => {
-  const { id } = useParams();
+  const [qty, setQty] = useState(1);
+
   const dispatch = useDispatch();
+  const { id } = useParams();
+  const history = useNavigate();
   const productDetails = useSelector((state) => state.productDetails);
-  const { error, loading, product } = productDetails;
+  const { loading, error, product } = productDetails;
 
   useEffect(() => {
     dispatch(listProductDetails(id));
-  }, [dispatch]);
+  }, [dispatch, id]);
+
+  const addToCartHandler = () => {
+    history(`/cart/${id}?qty=${qty}`);
+  };
 
   return (
     <div>
@@ -34,7 +49,8 @@ const ProductScreen = () => {
               src={product.image}
               alt={product.name}
               className="display-img"
-              fluid rounded
+              fluid
+              rounded
             />
           </Col>
 
@@ -76,9 +92,33 @@ const ProductScreen = () => {
                   </Row>
                 </ListGroup.Item>
 
+                {product.count_in_servings > 0 && (
+                  <ListGroup.Item>
+                    <Row>
+                      <Col>Quantity</Col>
+                      <Col xs="auto" sm={6} className="my-1">
+                        <Form.Control
+                          as="select"
+                          value={qty}
+                          onChange={(e) => setQty(e.target.value)}
+                        >
+                          {[...Array(product.count_in_servings).keys()].map(
+                            (x) => (
+                              <option key={x + 1} value={x + 1}>
+                                {x + 1}
+                              </option>
+                            )
+                          )}
+                        </Form.Control>
+                      </Col>
+                    </Row>
+                  </ListGroup.Item>
+                )}
+
                 <ListGroup.Item>
                   <div className="d-grid gap-2">
                     <Button
+                      onClick={addToCartHandler}
                       variant="secondary"
                       size="lg"
                       disabled={product.count_in_servings === 0}
@@ -86,7 +126,6 @@ const ProductScreen = () => {
                       Add to Cart
                     </Button>
                   </div>
-                  {/* <Button className="btn-block" type="button">Add to Cart</Button> */}
                 </ListGroup.Item>
               </ListGroup>
             </Card>
