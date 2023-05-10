@@ -17,7 +17,7 @@ import {
   ListGroupItem,
 } from "react-bootstrap";
 import Message from "../components/Message";
-import { addToCart } from "../actions/cartActions";
+import { addToCart, removeFromCart } from "../actions/cartActions";
 
 const CartScreen = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -25,7 +25,7 @@ const CartScreen = () => {
   const qty = searchParams.get("qty") ? Number(searchParams.get("qty")) : 1;
 
   const dispatch = useDispatch();
-  const history = useNavigate()
+  const history = useNavigate();
 
   const cart = useSelector((state) => state.cart);
   const { cartItems } = cart;
@@ -37,12 +37,12 @@ const CartScreen = () => {
   }, [dispatch, id, qty]);
 
   const removeFromCartHandler = (id) => {
-    console.log("remove: " + id);
+    dispatch(removeFromCart(id));
   };
 
   const checkOutHandler = () => {
-    history('/login?redirect=shipping')
-  }
+    history("/login?redirect=shipping");
+  };
 
   return (
     <Row>
@@ -119,7 +119,12 @@ const CartScreen = () => {
           </ListGroup>
           <ListGroup.Item>
             <div className="d-grid gap-2">
-              <Button type="button" variant="secondary" disabled={cartItems.length === 0} onClick={checkOutHandler}>
+              <Button
+                type="button"
+                variant="secondary"
+                disabled={cartItems.length === 0}
+                onClick={checkOutHandler}
+              >
                 PROCEED TO CHECKOUT
               </Button>
             </div>
