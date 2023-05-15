@@ -9,4 +9,5 @@ urlpatterns = [
 
     # JWT
     path('users/login', views.MyTokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('users/profile', views.get_user_profile, name='get_user_profile'),
 ]
