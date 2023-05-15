@@ -8,6 +8,8 @@ urlpatterns = [
     path('product/<str:pk>', views.get_product, name='product'),
 
     # JWT
+    path('users/', views.get_users, name='get_users'),
     path('users/login', views.MyTokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('users/profile', views.get_user_profile, name='get_user_profile'),
+    path('users/register', views.register_user, name='register_user'),
 ]
