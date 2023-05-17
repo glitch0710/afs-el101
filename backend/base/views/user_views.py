@@ -3,14 +3,13 @@ from django.http import JsonResponse
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAdminUser, IsAuthenticated
 from rest_framework.response import Response
-from .products import products
-from .models import Food
 from django.contrib.auth.models import User
 from django.contrib.auth.hashers import make_password
 from rest_framework import status
-from .serializers import FoodSerializer, UserSerializer, UserSerializerWithToken
+from base.serializers import UserSerializer, UserSerializerWithToken
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework_simplejwt.views import TokenObtainPairView
+
 
 class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
     def validate(self, attrs):
@@ -46,22 +45,6 @@ def register_user(request):
 
 
 @api_view(['GET'])
-def get_routes(request):
-    routes = [
-        '/api/products',
-        '/api/products',
-        '/api/products/upload',
-        '/api/products/<id>/reviews',
-        '/api/products/top',
-        '/api/products/<id>',
-        '/api/products/delete/<id>',
-        '/api/products/update/<id>',
-    ]
-
-    return Response(routes)
-
-#resume here
-@api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def get_user_profile(request):
     user = request.user
@@ -74,18 +57,4 @@ def get_user_profile(request):
 def get_users(request):
     users = User.objects.all()
     serializer = UserSerializer(users, many=True)
-    return Response(serializer.data)
-
-
-@api_view(['GET'])
-def get_products(request):
-    products = Food.objects.all()
-    serializer = FoodSerializer(products, many=True)
-    return Response(serializer.data)
-
-
-@api_view(['GET'])
-def get_product(request, pk):
-    product = Food.objects.get(pk=pk)
-    serializer = FoodSerializer(product, many=False)
     return Response(serializer.data)
