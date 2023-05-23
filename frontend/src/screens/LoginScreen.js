@@ -23,7 +23,7 @@ const LoginScreen = () => {
 
   useEffect(() => {
     if (userInfo) {
-      history(redirect);
+      history('../shipping', {replace: true});
     }
   }, [history, userInfo, redirect]);
 
