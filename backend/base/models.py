@@ -15,13 +15,10 @@ class Food(models.Model):
     user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
     name = models.CharField(max_length=100, blank=False, null=False)
     image = models.ImageField(blank=False, null=False)
-    category = models.ForeignKey(
-        Category, on_delete=models.SET_NULL, null=True)
-    price = models.DecimalField(
-        null=False, blank=False, decimal_places=2, max_digits=7)
+    category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True)
+    price = models.DecimalField(null=False, blank=False, decimal_places=2, max_digits=7)
     count_in_servings = models.IntegerField(blank=True, null=True, default=0)
-    rating = models.DecimalField(
-        blank=True, null=True, default=0, decimal_places=2, max_digits=5)
+    rating = models.DecimalField(blank=True, null=True, default=0, decimal_places=2, max_digits=5)
     num_reviews = models.IntegerField(blank=True, null=True, default=0)
     created_date = models.DateTimeField(auto_now_add=True)
 
@@ -31,16 +28,12 @@ class Food(models.Model):
 
 class Order(models.Model):
     payment_method = models.CharField(max_length=50, blank=False, null=False)
-    transaction_fee = models.DecimalField(
-        null=False, blank=False, decimal_places=2, max_digits=7)
-    total_price = models.DecimalField(
-        null=False, blank=False, decimal_places=2, max_digits=7)
+    transaction_fee = models.DecimalField(null=False, blank=False, decimal_places=2, max_digits=7)
+    total_price = models.DecimalField(null=False, blank=False, decimal_places=2, max_digits=7)
     is_paid = models.BooleanField(default=False)
     is_delivered = models.BooleanField(default=False)
-    payment_date = models.DateTimeField(
-        auto_now_add=False, null=True, blank=True)
-    delivery_date = models.DateTimeField(
-        auto_now_add=False, null=True, blank=True)
+    payment_date = models.DateTimeField(auto_now_add=False, null=True, blank=True)
+    delivery_date = models.DateTimeField(auto_now_add=False, null=True, blank=True)
     created_date = models.DateTimeField(auto_now_add=True)
     user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
 
@@ -62,9 +55,10 @@ class OrderDetail(models.Model):
 
 class Delivery(models.Model):
     order = models.OneToOneField(Order, on_delete=models.CASCADE, null=False)
-    address = models.TextField(blank=False, null=False)
-    shipping_fee = models.DecimalField(
-        null=False, blank=False, decimal_places=2, max_digits=7, default=0)
+    address = models.TextField(blank=True, null=True)
+    building = models.TextField(blank=True, null=True)
+    office = models.TextField(blank=True, null=True)
+    shipping_fee = models.DecimalField(null=False, blank=False, decimal_places=2, max_digits=7, default=0)
 
     def __str__(self):
         return str(self.address)

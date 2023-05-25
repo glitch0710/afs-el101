@@ -4,17 +4,49 @@ import { Button, Row, Col, ListGroup, Image, Card } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import Message from "../components/Message";
 import CheckoutSteps from "../components/CheckoutSteps";
+import { createOrder } from "../actions/orderActions";
+import { ORDER_CREATE_RESET } from "../constants/orderConstants";
 
 const PlaceOrderScreen = () => {
+  const orderCreate = useSelector((state) => state.orderCreate);
+  const { order, error, success } = orderCreate;
+  const dispatch = useDispatch();
+  const history = useNavigate();
   const cart = useSelector((state) => state.cart);
 
-  cart.itemsPrice = cart.cartItems.reduce((acc, item) => acc + item.price * item.qty, 0).toFixed(2)
-  cart.transactionFeePrice = cart.cartItems.reduce((acc) => acc + 5, 0).toFixed(2)
+  cart.itemsPrice = cart.cartItems
+    .reduce((acc, item) => acc + item.price * item.qty, 0)
+    .toFixed(2);
+  cart.transactionFeePrice = cart.cartItems
+    .reduce((acc) => acc + 5, 0)
+    .toFixed(2);
 
-  cart.totalPrice = (Number(cart.itemsPrice) + Number(cart.transactionFeePrice)).toFixed(2)
+  cart.totalPrice = (
+    Number(cart.itemsPrice) + Number(cart.transactionFeePrice)
+  ).toFixed(2);
+
+  if (!cart.paymentMethod) {
+    history("../payment", { replace: true });
+  }
+
+  useEffect(() => {
+    if (success) {
+      history(`/order/${order.id}`);
+      dispatch({ type: ORDER_CREATE_RESET });
+    }
+  }, [success, history]);
 
   const placeOrder = () => {
-    console.log('placed order')
+    dispatch(
+      createOrder({
+        orderItems: cart.cartItems,
+        shippingAddress: cart.shippingAddress,
+        paymentMethod: cart.paymentMethod,
+        itemsPrice: cart.itemsPrice,
+        transactionFeePrice: cart.transactionFeePrice,
+        totalPrice: cart.totalPrice,
+      })
+    );
   };
 
   return (
@@ -100,6 +132,9 @@ const PlaceOrderScreen = () => {
                   <Col>Grand Total: </Col>
                   <Col>₱{cart.totalPrice}</Col>
                 </Row>
+              </ListGroup.Item>
+              <ListGroup.Item>
+                {error && <Message variant="danger">{error}</Message>}
               </ListGroup.Item>
               <ListGroup.Item>
                 <div className="d-grid gap-2">
