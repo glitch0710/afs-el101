@@ -8,15 +8,13 @@ import CheckoutSteps from "../components/CheckoutSteps";
 const PlaceOrderScreen = () => {
   const cart = useSelector((state) => state.cart);
 
-  const itemsPrice = cart.cartItems.reduce((acc, item) => acc + item.price * item.qty, 0).toFixed(2)
-  const transactionFeePrice = cart.cartItems.reduce((acc) => acc + 10, 0).toFixed(2)
+  cart.itemsPrice = cart.cartItems.reduce((acc, item) => acc + item.price * item.qty, 0).toFixed(2)
+  cart.transactionFeePrice = cart.cartItems.reduce((acc) => acc + 5, 0).toFixed(2)
 
-  const totalPrice = (Number(itemsPrice) + Number(transactionFeePrice)).toFixed(2)
+  cart.totalPrice = (Number(cart.itemsPrice) + Number(cart.transactionFeePrice)).toFixed(2)
 
   const placeOrder = () => {
-    cart.itemsPrice = itemsPrice
-    cart.transactionFeePrice = transactionFeePrice
-    cart.totalPrice = totalPrice
+    console.log('placed order')
   };
 
   return (
@@ -88,19 +86,19 @@ const PlaceOrderScreen = () => {
               <ListGroup.Item>
                 <Row>
                   <Col>Food: </Col>
-                  <Col>₱{itemsPrice}</Col>
+                  <Col>₱{cart.itemsPrice}</Col>
                 </Row>
               </ListGroup.Item>
               <ListGroup.Item>
                 <Row>
                   <Col>Transaction Fee: </Col>
-                  <Col>₱{transactionFeePrice}</Col>
+                  <Col>₱{cart.transactionFeePrice}</Col>
                 </Row>
               </ListGroup.Item>
               <ListGroup.Item>
                 <Row>
                   <Col>Grand Total: </Col>
-                  <Col>₱{totalPrice}</Col>
+                  <Col>₱{cart.totalPrice}</Col>
                 </Row>
               </ListGroup.Item>
               <ListGroup.Item>
