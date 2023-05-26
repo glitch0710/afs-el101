@@ -22,7 +22,7 @@ def add_order_items(request):
             user=user,
             payment_method=data['paymentMethod'],
             transaction_fee=data['transactionFeePrice'],
-            total_price=data['itemsPrice'],
+            total_price=data['totalPrice'],
         )
 
         deliver = Delivery.objects.create(
@@ -35,7 +35,7 @@ def add_order_items(request):
 
         for i in order_items:
             food = Food.objects.get(pk=i['product'])
-
+            print(food.image.url)
             item = OrderDetail.objects.create(
                 order=order,
                 food=food,
