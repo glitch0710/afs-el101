@@ -18,7 +18,7 @@ const PlaceOrderScreen = () => {
     .reduce((acc, item) => acc + item.price * item.qty, 0)
     .toFixed(2);
   cart.transactionFeePrice = cart.cartItems
-    .reduce((acc) => acc + 5, 0)
+    .reduce((acc) => acc + 2, 0)
     .toFixed(2);
 
   cart.totalPrice = (
