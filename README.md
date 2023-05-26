@@ -52,6 +52,12 @@ After installing all backend dependencies, lets head over to the frontend depend
 After installing all the dependencies from our `backend` and `frontend` folders, it is time to run our project. I highly recommend you to open two terminals at the same time, one for `backend` server and one for the `frontend` server
   * Backend Server
     * On one of your terminal, type in: `cd backend`
+    * If this is the first time you setup this project, we execute this commands
+      * `python manage migrate`
+        * _Run this command if it is the first time you setup this project or whenever we have new updates or modifications in our models or the database itself._
+      * `python manage createsuperuser`
+        * _Fill in the necessary fields or details._
+        * _Only run this command the first time you setup the project to create initial superuser in your database._
     * And run your server from there by enabling your environment (steps on how to enable virtual environment above)
     * Type in: `python manage.py runserver`
 
