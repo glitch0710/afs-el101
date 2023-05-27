@@ -2,15 +2,20 @@ import React, { useState, useEffect } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { Button, Row, Col, ListGroup, Image, Card } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
+import { PayPalButton } from "react-paypal-button-v2";
 import Message from "../components/Message";
 import Loader from "../components/Loader";
-import { getOrderDetails } from "../actions/orderActions";
+import { getOrderDetails, payOrder } from "../actions/orderActions";
+import { ORDER_PAY_RESET } from "../constants/orderConstants";
 
 const OrderScreen = () => {
   const { id } = useParams();
   const dispatch = useDispatch();
+  const [sdkReady, setSdkReady] = useState(false);
   const orderDetails = useSelector((state) => state.orderDetails);
   const { order, error, loading } = orderDetails;
+  const orderPay = useSelector((state) => state.orderPay);
+  const { loading: loadingPay, success: successPay } = orderPay;
   const history = useNavigate();
 
   if (!loading && !error) {
@@ -19,11 +24,35 @@ const OrderScreen = () => {
       .toFixed(2);
   }
 
+  //AdKySoHzwxK-O_Kfc1-IQ0z-x-6MM69c12v-8_eCwIXl12MxstWVOIRf5hG5voXrH_u3Rff10OR849GR
+  const addPayPalScript = () => {
+    const script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src =
+      "https://www.paypal.com/sdk/js?client-id=AdKySoHzwxK-O_Kfc1-IQ0z-x-6MM69c12v-8_eCwIXl12MxstWVOIRf5hG5voXrH_u3Rff10OR849GR";
+    script.async = true;
+    script.onload = () => {
+      setSdkReady(true);
+    };
+    document.body.appendChild(script);
+  };
+
   useEffect(() => {
-    if (!order || order.id !== Number(id)) {
+    if (!order || successPay || order.id !== Number(id)) {
+      dispatch({ type: ORDER_PAY_RESET });
       dispatch(getOrderDetails(id));
+    } else if (!order.is_paid) {
+      if (!window.paypal) {
+        addPayPalScript();
+      } else {
+        setSdkReady(true);
+      }
     }
-  }, [order, id]);
+  }, [dispatch, order, id, successPay]);
+
+  const successPaymentHandler = (paymentResult) => {
+    dispatch(payOrder(id, paymentResult));
+  };
 
   return loading ? (
     <Loader />
@@ -31,23 +60,35 @@ const OrderScreen = () => {
     <Message variant="danger">{error}</Message>
   ) : (
     <div>
-        <h1>Summary: Order #{order.id}</h1>
+      <h1>Summary: Order #{order.id}</h1>
       <Row>
         <Col md={8}>
           <ListGroup variant="flush">
             <ListGroup.Item>
               <h2>Delivery</h2>
-              <p><strong>Name: </strong> {order.user.name} </p>
-              <p><strong>Email: </strong><a href={`mailto:${order.user.username}`} style={{color: '#4A2F28'}}>{order.user.username}</a></p>
+              <p>
+                <strong>Name: </strong> {order.user.name}{" "}
+              </p>
+              <p>
+                <strong>Email: </strong>
+                <a
+                  href={`mailto:${order.user.username}`}
+                  style={{ color: "#4A2F28" }}
+                >
+                  {order.user.username}
+                </a>
+              </p>
               <p>
                 <strong>Delivery: </strong>
                 {order.deliveryAddress.address},{" "}
                 {order.deliveryAddress.building}, {order.deliveryAddress.office}
               </p>
               {order.is_delivered ? (
-                <Message variant='success'>Delivered on {Date(order.delivery_date)}</Message>
-              ): (
-                <Message variant='warning'>Not Delivered</Message>
+                <Message variant="success">
+                  Delivered on {Date(order.delivery_date)}
+                </Message>
+              ) : (
+                <Message variant="warning">Not Delivered</Message>
               )}
             </ListGroup.Item>
 
@@ -58,9 +99,11 @@ const OrderScreen = () => {
                 {order.payment_method}
               </p>
               {order.is_paid ? (
-                <Message variant='success'>Paid on {Date(order.payment_date)}</Message>
-              ): (
-                <Message variant='warning'>Not Paid</Message>
+                <Message variant="success">
+                  Paid on {Date(order.payment_date)}
+                </Message>
+              ) : (
+                <Message variant="warning">Not Paid</Message>
               )}
             </ListGroup.Item>
 
@@ -75,7 +118,7 @@ const OrderScreen = () => {
                       <Row>
                         <Col md={1}>
                           <Image
-                            src={(item.image).slice(7)}
+                            src={item.image.slice(7)}
                             alt={item.name}
                             fluid
                             rounded
@@ -125,6 +168,20 @@ const OrderScreen = () => {
                   <Col>₱{order.total_price}</Col>
                 </Row>
               </ListGroup.Item>
+              {!order.is_paid && (
+                <ListGroup.Item>
+                  {loadingPay && <Loader />}
+
+                  {!sdkReady ? (
+                    <Loader />
+                  ) : (
+                    <PayPalButton
+                      amount={order.total_price}
+                      onSuccess={successPaymentHandler}
+                    />
+                  )}
+                </ListGroup.Item>
+              )}
             </ListGroup>
           </Card>
         </Col>
