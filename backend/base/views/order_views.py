@@ -5,6 +5,7 @@ from rest_framework.response import Response
 from base.models import Food, Order, OrderDetail, Delivery
 from base.serializers import FoodSerializer, OrderSerializer
 from rest_framework import status
+from datetime import datetime
 
 
 @api_view(['POST'])
@@ -67,3 +68,16 @@ def get_order_by_id(request, pk):
     except Exception:
         message = {'detail': 'Order does not exist.'}
         return Response(message, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['PUT'])
+@permission_classes([IsAuthenticated])
+def update_order_to_paid(request, pk):
+    order = Order.objects.get(pk=pk)
+
+    order.is_paid = True
+    order.payment_date = datetime.now()
+    order.save
+
+    return Response('Order was paid')
+    
