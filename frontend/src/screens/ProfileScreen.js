@@ -130,7 +130,7 @@ const ProfileScreen = () => {
           <Message variant="danger">{errorOrders}</Message>
         ) : (
           <Table className="table-sm" striped responsive>
-            <thead>
+            <thead style={{backgroundColor: '#4A2F28'}} className='text-white'>
               <tr>
                 <th>ID</th>
                 <th>Date</th>
@@ -146,14 +146,14 @@ const ProfileScreen = () => {
                   <td>{order.id}</td>
                   <td>{order.created_date.slice(0, 10)}</td>
                   <td>₱{order.total_price}</td>
-                  <td>
+                  <td align="center">
                     {order.is_paid ? (
                       <Badge bg="success"><i className="fas fa-check" style={{color: 'white'}}></i> Paid on {order.payment_date.slice(0,10)}</Badge>
                     ) : (
                       <Badge bg="danger"><i className="fas fa-times" style={{color: 'white'}}></i> Not Paid</Badge>
                     )}
                   </td>
-                  <td>
+                  <td align="center">
                     {order.is_delivered ? (
                       <Badge bg="success"><i className="fas fa-check" style={{color: 'white'}}></i> Delivered on {order.delivery_date.slice(0,10)}</Badge>
                     ) : (

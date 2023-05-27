@@ -1,5 +1,6 @@
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import { Container, Navbar, Nav, Image, NavDropdown } from "react-bootstrap";
 import { LinkContainer } from "react-router-bootstrap";
 import { logout } from "../actions/userActions";
@@ -10,9 +11,11 @@ const Header = () => {
   const { userInfo } = userLogin;
 
   const dispatch = useDispatch();
+  const history = useNavigate();
 
   const logoutHandler = () => {
     dispatch(logout());
+    history("/");
   };
 
   return (
@@ -43,6 +46,20 @@ const Header = () => {
                   <i className="fas fa-shopping-cart"></i> My Cart
                 </Nav.Link>
               </LinkContainer>
+
+              {userInfo && userInfo.is_admin && (
+                <NavDropdown title="Admin" id="adminmenu">
+                  <LinkContainer to="/admin/userlist">
+                    <NavDropdown.Item>Users</NavDropdown.Item>
+                  </LinkContainer>
+                  <LinkContainer to="/admin/productlist">
+                    <NavDropdown.Item>Product</NavDropdown.Item>
+                  </LinkContainer>
+                  <LinkContainer to="/admin/orderlist">
+                    <NavDropdown.Item>Orders</NavDropdown.Item>
+                  </LinkContainer>
+                </NavDropdown>
+              )}
 
               {userInfo ? (
                 <NavDropdown title={userInfo.name} id="username">
