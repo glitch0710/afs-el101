@@ -29,7 +29,7 @@ const OrderScreen = () => {
     const script = document.createElement("script");
     script.type = "text/javascript";
     script.src =
-      "https://www.paypal.com/sdk/js?client-id=AdKySoHzwxK-O_Kfc1-IQ0z-x-6MM69c12v-8_eCwIXl12MxstWVOIRf5hG5voXrH_u3Rff10OR849GR";
+      "https://www.paypal.com/sdk/js?client-id=AdKySoHzwxK-O_Kfc1-IQ0z-x-6MM69c12v-8_eCwIXl12MxstWVOIRf5hG5voXrH_u3Rff10OR849GR&currency=PHP";
     script.async = true;
     script.onload = () => {
       setSdkReady(true);
@@ -85,7 +85,7 @@ const OrderScreen = () => {
               </p>
               {order.is_delivered ? (
                 <Message variant="success">
-                  Delivered on {Date(order.delivery_date)}
+                  Delivered on {order.delivery_date.slice(0,10)}
                 </Message>
               ) : (
                 <Message variant="warning">Not Delivered</Message>
@@ -100,7 +100,7 @@ const OrderScreen = () => {
               </p>
               {order.is_paid ? (
                 <Message variant="success">
-                  Paid on {Date(order.payment_date)}
+                  Paid on {order.payment_date.slice(0,10)}
                 </Message>
               ) : (
                 <Message variant="warning">Not Paid</Message>
@@ -177,6 +177,7 @@ const OrderScreen = () => {
                   ) : (
                     <PayPalButton
                       amount={order.total_price}
+                      currency='PHP'
                       onSuccess={successPaymentHandler}
                     />
                   )}
