@@ -1,42 +1,52 @@
 import React, { useState, useEffect } from "react";
 import { Link, useParams, useNavigate, useLocation } from "react-router-dom";
 import { LinkContainer } from "react-router-bootstrap";
-import { Table, Button, Badge } from "react-bootstrap";
+import { Table, Button, Badge, Row, Col } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import Loader from "../components/Loader";
 import Message from "../components/Message";
-import { listUsers, deleteUser } from "../actions/userActions";
+import { listProducts } from "../actions/productActions";
 
-const UserListScreen = () => {
+const ProductListScreen = () => {
   const dispatch = useDispatch();
   const history = useNavigate();
 
-  const userList = useSelector((state) => state.userList);
-  const { loading, error, users } = userList;
+  const productList = useSelector((state) => state.productList);
+  const { loading, error, products } = productList;
 
   const userLogin = useSelector((state) => state.userLogin);
   const { userInfo } = userLogin;
 
-  const userDelete = useSelector((state) => state.userDelete);
-  const { success: successDelete } = userDelete;
-
   useEffect(() => {
     if (userInfo && userInfo.is_admin) {
-      dispatch(listUsers());
+      dispatch(listProducts());
     } else {
       history("/");
     }
-  }, [dispatch, history, successDelete, userInfo]);
+  }, [dispatch, history, userInfo]);
 
   const deleteHandler = (id) => {
-    if (window.confirm("Are you sure you want to delete this user?")) {
-      dispatch(deleteUser(id));
+    if (window.confirm("Are you sure you want to delete this product?")) {
+      //Delete
     }
   };
 
+  const createProductHandler = (product) => {
+    //create product
+  }
+
   return (
     <div>
-      <h1>Users</h1>
+      <Row className="justify-content-between">
+        <Col md={10}>
+            <h1>Products</h1>
+        </Col>
+        <Col md={2}>
+            <Button className="my-3" onClick={createProductHandler} variant="secondary">
+                <i className="fas fa-plus"></i> Create Product
+            </Button>
+        </Col>
+      </Row>
       {loading ? (
         <Loader />
       ) : error ? (
@@ -47,35 +57,18 @@ const UserListScreen = () => {
             <tr>
               <th>ID</th>
               <th>Name</th>
-              <th>Email</th>
-              <th>Admin</th>
+              <th>Price</th>
               <th>Actions</th>
             </tr>
           </thead>
           <tbody>
-            {users.map((user) => (
-              <tr key={user.id}>
-                <td>{user.id}</td>
-                <td>{user.name}</td>
-                <td>{user.email}</td>
+            {products.map((product) => (
+              <tr key={product.id}>
+                <td>{product.id}</td>
+                <td>{product.name}</td>
+                <td>₱{product.price}</td>
                 <td align="center">
-                  {user.is_admin ? (
-                    <Badge bg="success">
-                      <i
-                        className="fas fa-check"
-                        style={{ color: "white" }}
-                      ></i>{" "}
-                      Admin
-                    </Badge>
-                  ) : (
-                    <Badge bg="info">
-                      <i className="fas fa-user" style={{ color: "white" }}></i>{" "}
-                      Customer
-                    </Badge>
-                  )}
-                </td>
-                <td align="center">
-                  <LinkContainer to={`/admin/user/${user.id}/edit`}>
+                  <LinkContainer to={`/admin/product/${product.id}/edit`}>
                     <Button variant="secondary" className="btn-sm">
                       <i className="fas fa-edit"></i>
                     </Button>
@@ -84,7 +77,7 @@ const UserListScreen = () => {
                   <Button
                     variant="danger"
                     className="btn-sm"
-                    onClick={() => deleteHandler(user.id)}
+                    onClick={() => deleteHandler(product.id)}
                   >
                     <i className="fas fa-trash"></i>
                   </Button>
@@ -98,4 +91,4 @@ const UserListScreen = () => {
   );
 };
 
-export default UserListScreen;
+export default ProductListScreen;
