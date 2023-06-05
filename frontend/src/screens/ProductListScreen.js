@@ -5,7 +5,12 @@ import { Table, Button, Badge, Row, Col } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import Loader from "../components/Loader";
 import Message from "../components/Message";
-import { listProducts } from "../actions/productActions";
+import {
+  listProducts,
+  deleteProduct,
+  createProduct,
+} from "../actions/productActions";
+import { PRODUCT_CREATE_RESET } from "../constants/productConstants";
 
 const ProductListScreen = () => {
   const dispatch = useDispatch();
@@ -14,39 +19,68 @@ const ProductListScreen = () => {
   const productList = useSelector((state) => state.productList);
   const { loading, error, products } = productList;
 
+  const productDelete = useSelector((state) => state.productDelete);
+  const {
+    loading: loadingDelete,
+    error: errorDelete,
+    success: successDelete,
+  } = productDelete;
+
+  const productCreate = useSelector((state) => state.productCreate);
+  const {
+    loading: loadingCreate,
+    error: errorCreate,
+    success: successCreate,
+    product: createdProduct,
+  } = productCreate;
+
   const userLogin = useSelector((state) => state.userLogin);
   const { userInfo } = userLogin;
 
   useEffect(() => {
-    if (userInfo && userInfo.is_admin) {
-      dispatch(listProducts());
-    } else {
+    dispatch({ type: PRODUCT_CREATE_RESET });
+
+    if (!userInfo.is_admin) {
       history("/");
     }
-  }, [dispatch, history, userInfo]);
+
+    if (successCreate) {
+      history(`/admin/products/${createdProduct.id}/edit`);
+    } else {
+      dispatch(listProducts());
+    }
+  }, [dispatch, history, userInfo, successDelete, successCreate, createdProduct]);
 
   const deleteHandler = (id) => {
     if (window.confirm("Are you sure you want to delete this product?")) {
-      //Delete
+      dispatch(deleteProduct(id));
     }
   };
 
-  const createProductHandler = (product) => {
-    //create product
-  }
+  const createProductHandler = () => {
+    dispatch(createProduct())
+  };
 
   return (
     <div>
       <Row className="justify-content-between">
         <Col md={10}>
-            <h1>Products</h1>
+          <h1>Products</h1>
         </Col>
         <Col md={2}>
-            <Button className="my-3" onClick={createProductHandler} variant="secondary">
-                <i className="fas fa-plus"></i> Create Product
-            </Button>
+          <Button
+            className="my-3"
+            onClick={createProductHandler}
+            variant="secondary"
+          >
+            <i className="fas fa-plus"></i> Create Product
+          </Button>
         </Col>
       </Row>
+      {loadingDelete && <Loader />}
+      {errorDelete && <Message variant="danger">{errorDelete}</Message>}
+      {loadingCreate && <Loader />}
+      {errorCreate && <Message variant="danger">{errorCreate}</Message>}
       {loading ? (
         <Loader />
       ) : error ? (
