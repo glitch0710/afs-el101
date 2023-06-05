@@ -21,3 +21,40 @@ def get_product(request, pk):
     product = Food.objects.get(pk=pk)
     serializer = FoodSerializer(product, many=False)
     return Response(serializer.data)
+
+
+@api_view(['POST'])
+@permission_classes([IsAdminUser])
+def create_product(request):
+    user = request.user
+    product = Food.objects.create(
+        user=user,
+        name='Sample Name',
+        price=0,
+        count_in_servings=0,
+    )
+    serializer = FoodSerializer(product, many=False)
+    return Response(serializer.data)
+
+
+@api_view(['PUT'])
+@permission_classes([IsAdminUser])
+def update_product(request, pk):
+    data = request.data
+    product = Food.objects.get(pk=pk)
+
+    product.name = data['name']
+    product.price = data['price']
+    product.count_in_servings = data['count_in_servings']
+    product.save()
+
+    serializer = FoodSerializer(product, many=False)
+    return Response(serializer.data)
+
+
+@api_view(['DELETE'])
+@permission_classes([IsAdminUser])
+def delete_product(request, pk):
+    product = Food.objects.get(pk=pk)
+    product.delete()
+    return Response('Product Deleted')

@@ -14,8 +14,8 @@ class Category(models.Model):
 class Food(models.Model):
     user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
     name = models.CharField(max_length=100, blank=False, null=False)
-    image = models.ImageField(blank=False, null=False)
-    category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True)
+    image = models.ImageField(blank=False, null=False, default='/placeholder.png')
+    category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True, blank=True)
     price = models.DecimalField(null=False, blank=False, decimal_places=2, max_digits=7)
     count_in_servings = models.IntegerField(blank=True, null=True, default=0)
     rating = models.DecimalField(blank=True, null=True, default=0, decimal_places=2, max_digits=5)
