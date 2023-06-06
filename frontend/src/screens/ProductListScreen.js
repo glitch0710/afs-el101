@@ -45,7 +45,7 @@ const ProductListScreen = () => {
     }
 
     if (successCreate) {
-      history(`/admin/products/${createdProduct.id}/edit`);
+      history(`/admin/product/${createdProduct.id}/edit`);
     } else {
       dispatch(listProducts());
     }
