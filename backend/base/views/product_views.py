@@ -3,8 +3,9 @@ from django.http import JsonResponse
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAdminUser, IsAuthenticated
 from rest_framework.response import Response
+from rest_framework import status
 from base.products import products
-from base.models import Food
+from base.models import Food, Review
 from django.contrib.auth.models import User
 from base.serializers import FoodSerializer
 
@@ -29,7 +30,7 @@ def create_product(request):
     user = request.user
     product = Food.objects.create(
         user=user,
-        name='Sample Name',
+        name='Food Name',
         price=0,
         count_in_servings=0,
     )
@@ -71,3 +72,41 @@ def upload_image(request):
     product.save()
 
     return Response('Image was uploaded')
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def create_food_review(request, pk):
+    user = request.user
+    product = Food.objects.get(pk=pk)
+    data = request.data
+
+    exists = product.review_set.filter(user=user).exists()
+
+    if exists:
+        message = {'details': 'Food already reviewed'}
+        return Response(message, status=status.HTTP_400_BAD_REQUEST)
+    elif data['rating'] == 0:
+        message = {'details': 'Please select a rating'}
+        return Response(message, status=status.HTTP_400_BAD_REQUEST)
+    else:
+        review = Review.objects.create(
+            user=user,
+            food=product,
+            name=user.first_name,
+            rating=data['rating'],
+            comment=data['comment'],
+        )
+
+        reviews = product.review_set.all()
+        product.num_reviews = len(reviews)
+
+        total = 0
+        for rvw in reviews:
+            total += rvw.rating
+
+        product.rating = total/len(reviews)
+        product.save()
+
+        message = {'details': 'Review successfully added'}
+        return Response(message)
+    
