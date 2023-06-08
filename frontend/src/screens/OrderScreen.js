@@ -5,17 +5,33 @@ import { useDispatch, useSelector } from "react-redux";
 import { PayPalButton } from "react-paypal-button-v2";
 import Message from "../components/Message";
 import Loader from "../components/Loader";
-import { getOrderDetails, payOrder } from "../actions/orderActions";
-import { ORDER_PAY_RESET } from "../constants/orderConstants";
+import {
+  getOrderDetails,
+  payOrder,
+  deliverOrder,
+} from "../actions/orderActions";
+import {
+  ORDER_PAY_RESET,
+  ORDER_DELIVER_RESET,
+} from "../constants/orderConstants";
 
 const OrderScreen = () => {
   const { id } = useParams();
   const dispatch = useDispatch();
   const [sdkReady, setSdkReady] = useState(false);
+
   const orderDetails = useSelector((state) => state.orderDetails);
   const { order, error, loading } = orderDetails;
+
   const orderPay = useSelector((state) => state.orderPay);
   const { loading: loadingPay, success: successPay } = orderPay;
+
+  const orderDeliver = useSelector((state) => state.orderDeliver);
+  const { loading: loadingDeliver, success: successDeliver } = orderDeliver;
+
+  const userLogin = useSelector((state) => state.userLogin);
+  const { userInfo } = userLogin;
+
   const history = useNavigate();
 
   if (!loading && !error) {
@@ -29,7 +45,7 @@ const OrderScreen = () => {
     script.type = "text/javascript";
     script.src =
       "https://www.paypal.com/sdk/js?client-id=AdKySoHzwxK-O_Kfc1-IQ0z-x-6MM69c12v-8_eCwIXl12MxstWVOIRf5hG5voXrH_u3Rff10OR849GR&currency=PHP";
-      // "https://www.paypal.com/sdk/js?client-id=AU8IoWsDO7bpA0n89lOcxrEsBfSLvNdOSGdqIgxC3qXRO0UtBIZtN2-epbwHcpA346mKRAPHxHuE-Egx&currency=PHP";
+    // "https://www.paypal.com/sdk/js?client-id=AU8IoWsDO7bpA0n89lOcxrEsBfSLvNdOSGdqIgxC3qXRO0UtBIZtN2-epbwHcpA346mKRAPHxHuE-Egx&currency=PHP";
     script.async = true;
     script.onload = () => {
       setSdkReady(true);
@@ -38,8 +54,13 @@ const OrderScreen = () => {
   };
 
   useEffect(() => {
-    if (!order || successPay || order.id !== Number(id)) {
+    if (!userInfo) {
+      history("/");
+    }
+    
+    if (!order || successPay || order.id !== Number(id) || successDeliver) {
       dispatch({ type: ORDER_PAY_RESET });
+      dispatch({ type: ORDER_DELIVER_RESET });
       dispatch(getOrderDetails(id));
     } else if (!order.is_paid) {
       if (!window.paypal) {
@@ -48,10 +69,14 @@ const OrderScreen = () => {
         setSdkReady(true);
       }
     }
-  }, [dispatch, order, id, successPay]);
+  }, [dispatch, order, id, successPay, successDeliver]);
 
   const successPaymentHandler = (paymentResult) => {
     dispatch(payOrder(id, paymentResult));
+  };
+
+  const deliverHandler = () => {
+    dispatch(deliverOrder(order));
   };
 
   return loading ? (
@@ -85,7 +110,7 @@ const OrderScreen = () => {
               </p>
               {order.is_delivered ? (
                 <Message variant="success">
-                  Delivered on {order.delivery_date.slice(0,10)}
+                  Delivered on {order.delivery_date.slice(0, 10)}
                 </Message>
               ) : (
                 <Message variant="warning">Not Delivered</Message>
@@ -100,7 +125,7 @@ const OrderScreen = () => {
               </p>
               {order.is_paid ? (
                 <Message variant="success">
-                  Paid on {order.payment_date.slice(0,10)}
+                  Paid on {order.payment_date.slice(0, 10)}
                 </Message>
               ) : (
                 <Message variant="warning">Not Paid</Message>
@@ -177,13 +202,30 @@ const OrderScreen = () => {
                   ) : (
                     <PayPalButton
                       amount={order.total_price}
-                      currency='PHP'
+                      currency="PHP"
                       onSuccess={successPaymentHandler}
                     />
                   )}
                 </ListGroup.Item>
               )}
             </ListGroup>
+            {loadingDeliver && <Loader />}
+            {userInfo &&
+              userInfo.is_admin &&
+              order.is_paid &&
+              !order.is_delivered && (
+                <ListGroup.Item>
+                  <div className="d-grid gap-2">
+                    <Button
+                      type="button"
+                      variant="secondary"
+                      onClick={deliverHandler}
+                    >
+                      Mark as Delivered
+                    </Button>
+                  </div>
+                </ListGroup.Item>
+              )}
           </Card>
         </Col>
       </Row>
