@@ -83,10 +83,10 @@ def create_food_review(request, pk):
     exists = product.review_set.filter(user=user).exists()
 
     if exists:
-        message = {'details': 'Food already reviewed'}
+        message = {'detail': 'Food already reviewed'}
         return Response(message, status=status.HTTP_400_BAD_REQUEST)
     elif data['rating'] == 0:
-        message = {'details': 'Please select a rating'}
+        message = {'detail': 'Please select a rating'}
         return Response(message, status=status.HTTP_400_BAD_REQUEST)
     else:
         review = Review.objects.create(
@@ -107,6 +107,6 @@ def create_food_review(request, pk):
         product.rating = total/len(reviews)
         product.save()
 
-        message = {'details': 'Review successfully added'}
+        message = {'detail': 'Review successfully added'}
         return Response(message)
     
