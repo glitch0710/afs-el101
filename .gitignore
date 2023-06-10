@@ -8,7 +8,6 @@
 /mediafiles/*
 __pycache__/
 /.vscode/
-static/
 
 # coverage result
 .coverage
