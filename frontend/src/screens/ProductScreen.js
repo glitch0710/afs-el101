@@ -44,10 +44,10 @@ const ProductScreen = () => {
   } = productReviewCreate;
 
   useEffect(() => {
-    if(successProductReview){
-      setRating(0)
-      setComment('')
-      dispatch({type: PRODUCT_CREATE_REVIEW_RESET})
+    if (successProductReview) {
+      setRating(0);
+      setComment("");
+      dispatch({ type: PRODUCT_CREATE_REVIEW_RESET });
     }
     dispatch(listProductDetails(id));
   }, [dispatch, id, successProductReview]);
@@ -57,9 +57,9 @@ const ProductScreen = () => {
   };
 
   const submitHandler = (e) => {
-    e.preventDefault()
-    dispatch(createProductReview(id, {rating, comment}))
-  }
+    e.preventDefault();
+    dispatch(createProductReview(id, { rating, comment }));
+  };
 
   return (
     <div>
@@ -163,45 +163,75 @@ const ProductScreen = () => {
           <Row className="py-5">
             <Col md={6}>
               <h4>Reviews</h4>
-              {product.reviews.length === 0 && <Message variant='warning'>No reviews</Message>}
+              {product.reviews.length === 0 && (
+                <Message variant="warning">No reviews</Message>
+              )}
               <ListGroup variant="flush">
                 {product.reviews.map((review) => (
                   <ListGroup.Item key={review.id}>
                     <strong>{review.name}</strong>
-                    <Rating value={review.rating} color='#f8e825' />
-                    <p>{review.created_date.slice(0,10)}</p>
+                    <Rating value={review.rating} color="#f8e825" />
+                    <p>{review.created_date.slice(0, 10)}</p>
                     <p>{review.comment}</p>
                   </ListGroup.Item>
-                )) }
-
+                ))}
+              </ListGroup>
+            </Col>
+            <Col md={6}>
+              <ListGroup>
+                <h4>Write a review</h4>
                 <ListGroup.Item>
-                  <h4>Write a review</h4>
                   {loadingProductReview && <Loader />}
-                  {successProductReview && <Message variant='success'>Review submitted</Message>}
-                  {errorProductReview && <Message variant='danger'>{errorProductReview}</Message>}
+                  {successProductReview && (
+                    <Message variant="success">Review submitted</Message>
+                  )}
+                  {errorProductReview && (
+                    <Message variant="danger">{errorProductReview}</Message>
+                  )}
                   {userInfo ? (
                     <Form onSubmit={submitHandler}>
                       <Form.Group controlId="rating">
                         <Form.Label>Rating</Form.Label>
-                        <Form.Control as='select' value={rating} onChange={(e) => setRating(e.target.value)}>
-                          <option value=''>Select rating here...</option>
-                          <option value='1'>1 - Poor</option>
-                          <option value='2'>2 - Fair</option>
-                          <option value='3'>3 - Satisfactory</option>
-                          <option value='4'>4 - Very Satisfactory</option>
-                          <option value='5'>5 - Excellent</option>
+                        <Form.Control
+                          as="select"
+                          value={rating}
+                          onChange={(e) => setRating(e.target.value)}
+                        >
+                          <option value="">Select rating here...</option>
+                          <option value="1">1 - Poor</option>
+                          <option value="2">2 - Fair</option>
+                          <option value="3">3 - Satisfactory</option>
+                          <option value="4">4 - Very Satisfactory</option>
+                          <option value="5">5 - Excellent</option>
                         </Form.Control>
                       </Form.Group>
                       <Form.Group controlId="comment">
                         <Form.Label>Review</Form.Label>
-                        <Form.Control as='textarea' rows={5} value={comment} onChange={(e) => setComment(e.target.value)}></Form.Control>
+                        <Form.Control
+                          as="textarea"
+                          rows={5}
+                          value={comment}
+                          onChange={(e) => setComment(e.target.value)}
+                        ></Form.Control>
                       </Form.Group>
                       <div className="d-grid gap-2 mt-2">
-                        <Button disabled={loadingProductReview} type="submit" variant="secondary">Submit Review</Button>
+                        <Button
+                          disabled={loadingProductReview}
+                          type="submit"
+                          variant="secondary"
+                        >
+                          Submit Review
+                        </Button>
                       </div>
                     </Form>
-                  ):(
-                    <Message variant='warning'>Please <Link to='/login' style={{color: '#4A2F28'}}><strong>login</strong></Link> to write a review for this food.</Message>
+                  ) : (
+                    <Message variant="warning">
+                      Please{" "}
+                      <Link to="/login" style={{ color: "#4A2F28" }}>
+                        <strong>login</strong>
+                      </Link>{" "}
+                      to write a review for this food.
+                    </Message>
                   )}
                 </ListGroup.Item>
               </ListGroup>

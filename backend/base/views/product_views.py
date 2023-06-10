@@ -12,7 +12,12 @@ from base.serializers import FoodSerializer
 
 @api_view(['GET'])
 def get_products(request):
-    products = Food.objects.all()
+    query = request.query_params.get('keyword')
+
+    if query is None:
+        query = ''
+
+    products = Food.objects.filter(name__icontains=query)
     serializer = FoodSerializer(products, many=True)
     return Response(serializer.data)
 

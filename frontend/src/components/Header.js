@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { Container, Navbar, Nav, Image, NavDropdown } from "react-bootstrap";
 import { LinkContainer } from "react-router-bootstrap";
+import SearchBox from './SearchBox'
 import { logout } from "../actions/userActions";
 import logo from "../logo.png";
 
@@ -32,6 +33,7 @@ const Header = () => {
           </LinkContainer>
           <Navbar.Toggle aria-controls="responsive-navbar-nav" />
           <Navbar.Collapse id="responsive-navbar-nav">
+            <SearchBox />
             <Nav className="me-auto">
               {/* <LinkContainer to="/viands">
                 <Nav.Link>Viands</Nav.Link>
