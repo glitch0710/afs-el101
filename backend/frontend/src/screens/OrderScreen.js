@@ -43,9 +43,8 @@ const OrderScreen = () => {
   const addPayPalScript = () => {
     const script = document.createElement("script");
     script.type = "text/javascript";
-    script.src =
+    script.src = "https://www.paypal.com/sdk/js?client-id=ATOAtvBpbkeSsjFzkzU9i8oVZ_Xz1Ss3tRTXdAIqqdcRm07Aw_ST1jzDUp0tP59l5HSeBY93GuF5cTjG&currency=PHP";
       // "https://www.paypal.com/sdk/js?client-id=AdKySoHzwxK-O_Kfc1-IQ0z-x-6MM69c12v-8_eCwIXl12MxstWVOIRf5hG5voXrH_u3Rff10OR849GR&currency=PHP";
-    "https://www.paypal.com/sdk/js?client-id=AU8IoWsDO7bpA0n89lOcxrEsBfSLvNdOSGdqIgxC3qXRO0UtBIZtN2-epbwHcpA346mKRAPHxHuE-Egx&currency=PHP";
     script.async = true;
     script.onload = () => {
       setSdkReady(true);
